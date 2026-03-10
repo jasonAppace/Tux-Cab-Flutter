@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 const String GOOGLE_API_KEY = "AIzaSyAWFKJ1njXCiIyV2cjG5kcO87xJyIK6GGM";
 
@@ -75,118 +75,112 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildCustomHeader(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        _buildStepIndicator(),
-                        const SizedBox(height: 30),
-                        const Text(
-                          'Start Your Journey',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Experience the ultimate luxury with our pre-scheduled premium rides in the Greater Sacramento Area.',
-                          style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: 13,
-                            height: 1.4,
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                        _buildLabeledInput(
-                          label: 'Pickup Address',
-                          child: _buildLocationField(
-                            controller: _pickupController,
-                            hintText: 'Enter pickup address',
-                            icon: Icons.search,
-                            suffix: IconButton(
-                              icon: const Icon(
-                                Icons.map_outlined,
-                                color: AppStyles.metallicYellow,
-                                size: 20,
-                              ),
-                              onPressed: () => _handleMapPick(isPickup: true),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildLabeledInput(
-                          label: 'Drop-off Address',
-                          child: _buildLocationField(
-                            controller: _dropoffController,
-                            hintText: 'Enter drop-off address',
-                            icon: Icons.search,
-                            suffix: IconButton(
-                              icon: const Icon(
-                                Icons.map_outlined,
-                                color: AppStyles.metallicYellow,
-                                size: 20,
-                              ),
-                              onPressed: () => _handleMapPick(isPickup: false),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildLabeledInput(
-                          label: 'Pickup Date',
-                          child: _buildSelectableField(
-                            label: _selectedDate == null
-                                ? 'Select Date'
-                                : DateFormat(
-                                    'EEEE, MMM dd',
-                                  ).format(_selectedDate!),
-                            icon: Icons.calendar_today_outlined,
-                            onTap: _pickDate,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildLabeledInput(
-                          label: 'Pickup Time',
-                          child: _buildSelectableField(
-                            label: _selectedTime == null
-                                ? 'Select Time'
-                                : _selectedTime!.format(context),
-                            icon: Icons.access_time,
-                            onTap: _pickTime,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildLabeledInput(
-                          label: 'Extra Waiting Hours',
-                          child: _buildWaitingHoursDropdown(),
-                        ),
-                        const SizedBox(height: 24),
-                        _buildBookingType(),
-                        const SizedBox(height: 24),
-                        _buildRideShareToggle(),
-                        const SizedBox(height: 40),
-                        _buildContinueButton(),
-                        const SizedBox(height: 20),
-                      ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildCustomHeader(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    _buildStepIndicator(),
+                    const SizedBox(height: 30),
+                    const Text(
+                      'Start Your Journey',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Experience the ultimate luxury with our pre-scheduled premium rides in the Greater Sacramento Area.',
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    _buildLabeledInput(
+                      label: 'Pickup Address',
+                      child: _buildLocationField(
+                        controller: _pickupController,
+                        hintText: 'Enter pickup address',
+                        icon: Icons.search,
+                        suffix: IconButton(
+                          icon: const Icon(
+                            Icons.map_outlined,
+                            color: AppStyles.metallicYellow,
+                            size: 20,
+                          ),
+                          onPressed: () => _handleMapPick(isPickup: true),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildLabeledInput(
+                      label: 'Drop-off Address',
+                      child: _buildLocationField(
+                        controller: _dropoffController,
+                        hintText: 'Enter drop-off address',
+                        icon: Icons.search,
+                        suffix: IconButton(
+                          icon: const Icon(
+                            Icons.map_outlined,
+                            color: AppStyles.metallicYellow,
+                            size: 20,
+                          ),
+                          onPressed: () => _handleMapPick(isPickup: false),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildLabeledInput(
+                      label: 'Pickup Date',
+                      child: _buildSelectableField(
+                        label: _selectedDate == null
+                            ? 'Select Date'
+                            : DateFormat(
+                                'EEEE, MMM dd',
+                              ).format(_selectedDate!),
+                        icon: Icons.calendar_today_outlined,
+                        onTap: _pickDate,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildLabeledInput(
+                      label: 'Pickup Time',
+                      child: _buildSelectableField(
+                        label: _selectedTime == null
+                            ? 'Select Time'
+                            : _selectedTime!.format(context),
+                        icon: Icons.access_time,
+                        onTap: _pickTime,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildLabeledInput(
+                      label: 'Extra Waiting Hours',
+                      child: _buildWaitingHoursDropdown(),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildBookingType(),
+                    const SizedBox(height: 24),
+                    _buildRideShareToggle(),
+                    const SizedBox(height: 40),
+                    _buildContinueButton(),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 import 'active_ride_details_screen.dart';
 
@@ -10,7 +10,6 @@ class UpcomingRidesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -23,12 +22,7 @@ class UpcomingRidesScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          _buildRidesList(context),
-        ],
-      ),
+      body: _buildRidesList(context),
     );
   }
 

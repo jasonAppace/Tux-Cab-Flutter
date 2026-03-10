@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -8,68 +8,62 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Profile', style: TextStyle(color: Colors.white)),
         automaticallyImplyLeading: false,
       ),
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                _buildProfileHeader(),
-                const SizedBox(height: 40),
-                _buildProfileSection('Account Details', [
-                  _buildProfileItem(Icons.person_outline, 'Name', 'John Doe'),
-                  _buildProfileItem(
-                    Icons.email_outlined,
-                    'Email',
-                    'john.doe@example.com',
-                  ),
-                  _buildProfileItem(
-                    Icons.phone_outlined,
-                    'Phone',
-                    '+1 (555) 000-1234',
-                  ),
-                ]),
-                const SizedBox(height: 30),
-                _buildProfileSection('Saved Information', [
-                  _buildProfileItem(
-                    Icons.home_outlined,
-                    'Home',
-                    '123 Sacramento St',
-                  ),
-                  _buildProfileItem(
-                    Icons.work_outline,
-                    'Work',
-                    '456 Business Park',
-                  ),
-                  _buildProfileItem(
-                    Icons.credit_card,
-                    'Saved Cards',
-                    'Visa ending in 4242',
-                  ),
-                ]),
-                const SizedBox(height: 30),
-                _buildProfileSection('Preferences', [
-                  _buildProfileItem(
-                    Icons.notifications_none,
-                    'Notifications',
-                    'Enabled',
-                  ),
-                  _buildProfileItem(Icons.language, 'Language', 'English'),
-                ]),
-                const SizedBox(height: 40),
-                _buildLogoutButton(),
-              ],
-            ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            _buildProfileHeader(),
+            const SizedBox(height: 40),
+            _buildProfileSection('Account Details', [
+              _buildProfileItem(Icons.person_outline, 'Name', 'John Doe'),
+              _buildProfileItem(
+                Icons.email_outlined,
+                'Email',
+                'john.doe@example.com',
+              ),
+              _buildProfileItem(
+                Icons.phone_outlined,
+                'Phone',
+                '+1 (555) 000-1234',
+              ),
+            ]),
+            const SizedBox(height: 30),
+            _buildProfileSection('Saved Information', [
+              _buildProfileItem(
+                Icons.home_outlined,
+                'Home',
+                '123 Sacramento St',
+              ),
+              _buildProfileItem(
+                Icons.work_outline,
+                'Work',
+                '456 Business Park',
+              ),
+              _buildProfileItem(
+                Icons.credit_card,
+                'Saved Cards',
+                'Visa ending in 4242',
+              ),
+            ]),
+            const SizedBox(height: 30),
+            _buildProfileSection('Preferences', [
+              _buildProfileItem(
+                Icons.notifications_none,
+                'Notifications',
+                'Enabled',
+              ),
+              _buildProfileItem(Icons.language, 'Language', 'English'),
+            ]),
+            const SizedBox(height: 40),
+            _buildLogoutButton(),
+          ],
+        ),
       ),
     );
   }

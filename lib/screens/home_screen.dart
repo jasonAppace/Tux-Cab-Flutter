@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tux_cab/screens/ride_completion_screen.dart';
 import 'ride_details_screen.dart';
 import 'upcoming_rides_screen.dart';
 import 'active_ride_details_screen.dart';
@@ -7,7 +6,6 @@ import 'ride_history_screen.dart';
 import 'profile_screen.dart';
 import 'support_screen.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,20 +21,15 @@ class _HomeScreenState extends State<HomeScreen> {
     const _HomeMainBody(),
     const RideHistoryScreen(),
     const ProfileScreen(),
-    const SupportScreen(),
+    // const SupportScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SafeArea(
-            child: IndexedStack(index: _selectedIndex, children: _pages),
-          ),
-        ],
+      body: SafeArea(
+        child: IndexedStack(index: _selectedIndex, children: _pages),
       ),
       bottomNavigationBar: _buildBottomNav(),
     );
@@ -66,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildNavItem(0, Icons.search_rounded, 'Explore'),
             _buildNavItem(1, Icons.route_rounded, 'History'),
-            _buildNavItem(3, Icons.chat_bubble_outline_rounded, 'Support'),
+            // _buildNavItem(3, Icons.chat_bubble_outline_rounded, 'Support'),
             _buildNavItem(2, Icons.more_horiz_rounded, 'Profile'),
           ],
         ),
@@ -116,7 +109,7 @@ class _HomeMainBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -126,15 +119,19 @@ class _HomeMainBody extends StatelessWidget {
           const SizedBox(height: 30),
           _buildSectionTitle(
             context,
-            'Upcoming Rides',
+            'Upcoming Scheduled Rides',
             const UpcomingRidesScreen(),
           ),
           const SizedBox(height: 16),
           _buildUpcomingRides(context),
           const SizedBox(height: 30),
-          _buildSectionTitle(context, 'Past Rides', const RideHistoryScreen()),
+          _buildSectionTitle(
+            context,
+            "Today's Assigned Rides",
+            const UpcomingRidesScreen(),
+          ),
           const SizedBox(height: 16),
-          _buildPastRides(context),
+          _buildAssignedRides(context),
         ],
       ),
     );
@@ -185,13 +182,13 @@ class _HomeMainBody extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: AppStyles.primaryGradient,
+          color: AppStyles.primaryButton,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppStyles.metallicYellow.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+              color: AppStyles.primaryButton.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -278,20 +275,40 @@ class _HomeMainBody extends StatelessWidget {
   Widget _buildUpcomingRides(BuildContext context) {
     final rides = [
       {
-        'id': '#TX-99821',
-        'date': 'Oct 24, 2024',
-        'time': '10:30 AM',
-        'status': 'Pending Assignment',
-        'from': 'Sacramento Intl Airport',
-        'to': 'Downtown Sacramento',
+        'id': 'BK-102555',
+        'date': '25 Oct',
+        'time': '2:00 PM',
+        'status': 'Upcoming',
+        'from': '456 Elm St, San Francisco',
+        'to': 'SFO Airport',
+        'driver': 'Sarah Jenkins',
+        'price': '\$150.00',
       },
+    ];
+
+    return Column(
+      children: rides
+          .map(
+            (ride) => Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: _buildRideCard(context, ride),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildAssignedRides(BuildContext context) {
+    final rides = [
       {
-        'id': '#TX-99750',
-        'date': 'Oct 28, 2024',
-        'time': '02:00 PM',
-        'status': 'Scheduled',
-        'from': 'Roseville, CA',
-        'to': 'Sacramento Airport',
+        'id': 'BK-102356',
+        'date': '24 Oct',
+        'time': '10:00 AM',
+        'status': 'Assigned',
+        'from': 'Downtown Plaza',
+        'to': 'Oakland Airport',
+        'driver': 'John Doe',
+        'price': '\$120.00',
       },
     ];
 
@@ -308,160 +325,206 @@ class _HomeMainBody extends StatelessWidget {
   }
 
   Widget _buildRideCard(BuildContext context, Map<String, String> ride) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ActiveRideDetailsScreen(),
-        ),
+    bool isUpcoming =
+        ride['status'] == 'Scheduled' || ride['status'] == 'Upcoming';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppStyles.cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1.5),
       ),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppStyles.cardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  ride['id']!,
-                  style: const TextStyle(
-                    color: AppStyles.metallicYellow,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: Text(
+                  'Booking ID # ${ride['id']}',
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isUpcoming ? AppStyles.upcomingBg : AppStyles.assignedBg,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  ride['status']!,
+                  style: TextStyle(
+                    color: isUpcoming
+                        ? AppStyles.upcomingText
+                        : AppStyles.assignedText,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: AppStyles.innerCardBg,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color:
-                        (ride['status'] == 'Scheduled'
-                                ? Colors.blueAccent
-                                : Colors.orangeAccent)
-                            .withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    color: (isUpcoming ? Colors.blue : Colors.orange)
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: (isUpcoming ? Colors.blue : Colors.orange)
+                          .withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
-                    ride['status']!,
+                    isUpcoming ? 'Scheduled Ride' : 'Assigned Ride',
                     style: TextStyle(
-                      color: ride['status'] == 'Scheduled'
-                          ? Colors.blueAccent
-                          : Colors.orangeAccent,
-                      fontSize: 11,
+                      color: isUpcoming ? Colors.blue : Colors.orange,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
-            ),
-            const Divider(color: Colors.white10, height: 30),
-            _buildRideLocationRow(
-              Icons.radio_button_checked,
-              ride['from']!,
-              Colors.greenAccent,
-            ),
-            const SizedBox(height: 12),
-            _buildRideLocationRow(
-              Icons.location_on,
-              ride['to']!,
-              Colors.redAccent,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                const Icon(
-                  Icons.calendar_today,
-                  color: Colors.white54,
-                  size: 14,
-                ),
-                const SizedBox(width: 8),
                 Text(
                   '${ride['date']} • ${ride['time']}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+          _buildLocationSection('Pickup', ride['from']!, Icons.gps_fixed),
+          const SizedBox(height: 12),
+          _buildLocationSection('Drop-Off', ride['to']!, Icons.location_on),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppStyles.innerCardBg,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage('https://i.pravatar.cc/150'),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    ride['driver'] ?? 'Sarah Jenkins',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                _buildCircularIcon(Icons.call, Colors.white12),
+                const SizedBox(width: 8),
+                _buildCircularIcon(Icons.chat_bubble, Colors.white12),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Rent To Collect',
+                style: TextStyle(color: Colors.white54, fontSize: 13),
+              ),
+              Text(
+                ride['price'] ?? '\$150.00',
+                style: const TextStyle(
+                  color: AppStyles.metallicYellow,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ActiveRideDetailsScreen(),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppStyles.primaryButton,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'View Details',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildRideLocationRow(IconData icon, String label, Color color) {
-    return Row(
+  Widget _buildLocationSection(String label, String address, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: color, size: 16),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
-            overflow: TextOverflow.ellipsis,
-          ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white38, fontSize: 11),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Icon(icon, color: AppStyles.metallicYellow, size: 16),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                address,
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildPastRides(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const RideCompletionScreen()),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppStyles.cardBg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white12),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.history, color: AppStyles.metallicYellow),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Sacramento Int Airport',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Oct 24, 2024 • 10:30 AM',
-                    style: TextStyle(color: Colors.white54, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            const Text(
-              '\$45.00',
-              style: TextStyle(
-                color: AppStyles.metallicYellow,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildCircularIcon(IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      child: Icon(icon, color: Colors.white, size: 18),
     );
   }
+
 }

@@ -7,13 +7,25 @@ class AppStyles {
   // Dark background colors
   static const Color darkBg = Color(0xFF0D1117);
   static const Color cardBg = Color(0xFF161B22);
+  static const Color innerCardBg = Color(0xFF1C2128);
   static const Color inputBg = Color(0xFF0D1117);
+  static const Color surfaceBg = Color(0xFF010409);
 
-  // Gradient for the primary button
+  // Status colors
+  static const Color upcomingBg = Color(0xFF1A3A5A);
+  static const Color upcomingText = Color(0xFF58A6FF);
+  static const Color assignedBg = Color(0xFF3B3B00);
+  static const Color assignedText = Color(0xFFD29922);
+
+  // Button colors
+  static const Color primaryButton = Color(0xFFFFD700);
+  static const Color secondaryButton = Color(0xFF30363D);
+
+  // Gradient for the primary button (less shining/more subtle)
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [
-      Color(0xFFFFD700), // Pure Gold
-      Color(0xFFB8860B), // Dark Gold
+      Color(0xFFFFD700), // Gold
+      Color(0xFFFFC107), // Amber
     ],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

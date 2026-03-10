@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 import 'home_screen.dart';
 
 class RideCompletionScreen extends StatefulWidget {
@@ -17,54 +17,48 @@ class _RideCompletionScreenState extends State<RideCompletionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 20),
-                  const Icon(
-                    Icons.check_circle,
-                    color: AppStyles.metallicYellow,
-                    size: 80,
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Ride Completed!',
-                    style: AppStyles.headingStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-                  _buildSummaryCard(),
-                  const SizedBox(height: 40),
-                  const Text(
-                    'Rate your experience',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildRatingStars(),
-                  const SizedBox(height: 24),
-                  _buildFeedbackField(),
-                  const SizedBox(height: 40),
-                  _buildSubmitButton(),
-                  const SizedBox(height: 8),
-                  _buildReportIssue(),
-                  _buildInvoiceLink(),
-                ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              const Icon(
+                Icons.check_circle,
+                color: AppStyles.metallicYellow,
+                size: 80,
               ),
-            ),
+              const SizedBox(height: 24),
+              const Text(
+                'Ride Completed!',
+                style: AppStyles.headingStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              _buildSummaryCard(),
+              const SizedBox(height: 40),
+              const Text(
+                'Rate your experience',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              _buildRatingStars(),
+              const SizedBox(height: 24),
+              _buildFeedbackField(),
+              const SizedBox(height: 40),
+              _buildSubmitButton(),
+              const SizedBox(height: 8),
+              _buildReportIssue(),
+              _buildInvoiceLink(),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

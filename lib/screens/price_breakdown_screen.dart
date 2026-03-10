@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'payment_selection_screen.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 class PriceBreakdownScreen extends StatelessWidget {
   final String category;
@@ -26,7 +26,6 @@ class PriceBreakdownScreen extends StatelessWidget {
     double grandTotal = subTotal - discount;
 
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -39,30 +38,25 @@ class PriceBreakdownScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildFareSummary(
-                    baseFare,
-                    distanceCharge,
-                    waitingCharge,
-                    tax,
-                    discount,
-                    grandTotal,
-                  ),
-                  const Spacer(),
-                  _buildConfirmButton(context),
-                ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildFareSummary(
+                baseFare,
+                distanceCharge,
+                waitingCharge,
+                tax,
+                discount,
+                grandTotal,
               ),
-            ),
+              const Spacer(),
+              _buildConfirmButton(context),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

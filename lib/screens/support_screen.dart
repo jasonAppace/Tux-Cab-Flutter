@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 class SupportScreen extends StatelessWidget {
   const SupportScreen({super.key});
@@ -8,54 +8,48 @@ class SupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Support', style: TextStyle(color: Colors.white)),
         automaticallyImplyLeading: false,
       ),
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildContactSupportCard(),
-                const SizedBox(height: 30),
-                const Text(
-                  'Frequently Asked Questions',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildFaqItem(
-                  'How do I cancel a ride?',
-                  'You can cancel a ride from the Upcoming Rides screen. Free cancellation is available up to 12 hours before pickup.',
-                ),
-                _buildFaqItem(
-                  'What is RideShare?',
-                  'RideShare allows you to share your luxury ride with another passenger heading in a similar direction for a discount.',
-                ),
-                _buildFaqItem(
-                  'How is fare calculated?',
-                  'Fare includes a base rate plus per-mile charges, California taxes, and any extra waiting hours requested.',
-                ),
-                const SizedBox(height: 40),
-                _buildSupportAction(
-                  'Report Safety Concern',
-                  Icons.report_problem_outlined,
-                  Colors.redAccent,
-                ),
-              ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildContactSupportCard(),
+            const SizedBox(height: 30),
+            const Text(
+              'Frequently Asked Questions',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            _buildFaqItem(
+              'How do I cancel a ride?',
+              'You can cancel a ride from the Upcoming Rides screen. Free cancellation is available up to 12 hours before pickup.',
+            ),
+            _buildFaqItem(
+              'What is RideShare?',
+              'RideShare allows you to share your luxury ride with another passenger heading in a similar direction for a discount.',
+            ),
+            _buildFaqItem(
+              'How is fare calculated?',
+              'Fare includes a base rate plus per-mile charges, California taxes, and any extra waiting hours requested.',
+            ),
+            const SizedBox(height: 40),
+            _buildSupportAction(
+              'Report Safety Concern',
+              Icons.report_problem_outlined,
+              Colors.redAccent,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'live_tracking_screen.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 class ActiveRideDetailsScreen extends StatelessWidget {
   const ActiveRideDetailsScreen({super.key});
@@ -10,7 +10,6 @@ class ActiveRideDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -23,30 +22,25 @@ class ActiveRideDetailsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildMapSection(context),
-                const SizedBox(height: 24),
-                _buildDriverCard(),
-                const SizedBox(height: 24),
-                _buildStatusTimeline(),
-                const SizedBox(height: 24),
-                _buildRideInfo(),
-                const SizedBox(height: 30),
-                _buildContactRow(),
-                const SizedBox(height: 20),
-                _buildEmergencyButton(),
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildMapSection(context),
+            const SizedBox(height: 24),
+            _buildDriverCard(),
+            const SizedBox(height: 24),
+            _buildStatusTimeline(),
+            const SizedBox(height: 24),
+            _buildRideInfo(),
+            const SizedBox(height: 30),
+            _buildContactRow(),
+            const SizedBox(height: 20),
+            _buildEmergencyButton(),
+            const SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }

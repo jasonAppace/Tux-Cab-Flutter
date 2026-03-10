@@ -29,53 +29,37 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Background image with texture/pattern
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.15,
-              child: Image.asset(
-                'assets/images/login_background.png',
-                fit: BoxFit.cover,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              // Header Image
+              Image.asset(
+                'assets/images/header_image.png',
+                height: 100,
+                fit: BoxFit.contain,
               ),
-            ),
+              const SizedBox(height: 30),
+
+              // Login Card
+              _buildLoginCard(context),
+
+              const SizedBox(height: 40),
+
+              // Social Login Section
+              _buildSocialLoginSection(),
+
+              const SizedBox(height: 40),
+
+              // Footer link
+              _buildFooterLink(context),
+
+              const SizedBox(height: 20),
+            ],
           ),
-          // Main content
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  // Header Image
-                  Image.asset(
-                    'assets/images/header_image.png',
-                    height: 100,
-                    fit: BoxFit.contain,
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Login Card
-                  _buildLoginCard(context),
-
-                  const SizedBox(height: 40),
-
-                  // Social Login Section
-                  _buildSocialLoginSection(),
-
-                  const SizedBox(height: 40),
-
-                  // Footer link
-                  _buildFooterLink(context),
-
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 import 'booking_confirmation_screen.dart';
 
 class PaymentSelectionScreen extends StatefulWidget {
@@ -22,7 +22,6 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -35,44 +34,39 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildSectionTitle('Select Saved Card'),
-                  const SizedBox(height: 16),
-                  ..._savedCards.asMap().entries.map(
-                    (entry) => _buildCardItem(entry.key, entry.value),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildAddNewCardButton(),
-                  const SizedBox(height: 40),
-                  _buildSectionTitle('Billing Summary'),
-                  const SizedBox(height: 16),
-                  _buildBillingSummary(),
-                  const SizedBox(height: 40),
-                  _buildSectionTitle('Cancellation Policy'),
-                  const SizedBox(height: 12),
-                  const Text(
-                    '• Free cancellation up to 12 hours before pickup.\n• 50% charge if canceled within 6-12 hours.\n• No refund for cancellations under 6 hours.',
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 13,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  _buildPayButton(),
-                ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildSectionTitle('Select Saved Card'),
+              const SizedBox(height: 16),
+              ..._savedCards.asMap().entries.map(
+                (entry) => _buildCardItem(entry.key, entry.value),
               ),
-            ),
+              const SizedBox(height: 16),
+              _buildAddNewCardButton(),
+              const SizedBox(height: 40),
+              _buildSectionTitle('Billing Summary'),
+              const SizedBox(height: 16),
+              _buildBillingSummary(),
+              const SizedBox(height: 40),
+              _buildSectionTitle('Cancellation Policy'),
+              const SizedBox(height: 12),
+              const Text(
+                '• Free cancellation up to 12 hours before pickup.\n• 50% charge if canceled within 6-12 hours.\n• No refund for cancellations under 6 hours.',
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 13,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 50),
+              _buildPayButton(),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

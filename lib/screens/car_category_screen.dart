@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'price_breakdown_screen.dart';
 import '../utils/style_utils.dart';
-import '../utils/app_painters.dart';
+
 
 class CarCategoryScreen extends StatefulWidget {
   final bool rideShareEnabled;
@@ -53,12 +53,10 @@ class _CarCategoryScreenState extends State<CarCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          CustomPaint(painter: GridPatternPainter(), size: Size.infinite),
-          SafeArea(
-            child: Column(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
               children: [
                 _buildCustomHeader(),
                 Expanded(
@@ -79,9 +77,14 @@ class _CarCategoryScreenState extends State<CarCategoryScreen> {
                 ),
               ],
             ),
-          ),
-          Positioned(bottom: 0, left: 0, right: 0, child: _buildBottomAction()),
-        ],
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildBottomAction(),
+            ),
+          ],
+        ),
       ),
     );
   }
