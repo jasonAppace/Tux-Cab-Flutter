@@ -5,6 +5,7 @@ import 'active_ride_details_screen.dart';
 import 'ride_history_screen.dart';
 import 'profile_screen.dart';
 import 'support_screen.dart';
+import 'ride_completion_screen.dart';
 import '../utils/style_utils.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const _HomeMainBody(),
     const RideHistoryScreen(),
     const ProfileScreen(),
-    // const SupportScreen(),
+    const SupportScreen(),
   ];
 
   @override
@@ -59,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildNavItem(0, Icons.search_rounded, 'Explore'),
             _buildNavItem(1, Icons.route_rounded, 'History'),
-            // _buildNavItem(3, Icons.chat_bubble_outline_rounded, 'Support'),
+            _buildNavItem(3, Icons.chat_bubble_outline_rounded, 'Support'),
             _buildNavItem(2, Icons.more_horiz_rounded, 'Profile'),
           ],
         ),
@@ -125,13 +126,9 @@ class _HomeMainBody extends StatelessWidget {
           const SizedBox(height: 16),
           _buildUpcomingRides(context),
           const SizedBox(height: 30),
-          _buildSectionTitle(
-            context,
-            "Today's Assigned Rides",
-            const UpcomingRidesScreen(),
-          ),
+          _buildSectionTitle(context, 'Past Rides', const RideHistoryScreen()),
           const SizedBox(height: 16),
-          _buildAssignedRides(context),
+          _buildPastRides(context),
         ],
       ),
     );
@@ -298,15 +295,15 @@ class _HomeMainBody extends StatelessWidget {
     );
   }
 
-  Widget _buildAssignedRides(BuildContext context) {
+  Widget _buildPastRides(BuildContext context) {
     final rides = [
       {
-        'id': 'BK-102356',
-        'date': '24 Oct',
+        'id': 'BK-102123',
+        'date': '20 Oct',
         'time': '10:00 AM',
-        'status': 'Assigned',
-        'from': 'Downtown Plaza',
-        'to': 'Oakland Airport',
+        'status': 'Completed',
+        'from': 'Oakland Airport',
+        'to': 'Downtown Plaza',
         'driver': 'John Doe',
         'price': '\$120.00',
       },
@@ -333,7 +330,7 @@ class _HomeMainBody extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppStyles.cardBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1.5),
+        border: Border.all(color: Colors.white.withOpacity(0.05), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +339,10 @@ class _HomeMainBody extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.white24),
@@ -353,17 +353,26 @@ class _HomeMainBody extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: isUpcoming ? AppStyles.upcomingBg : AppStyles.assignedBg,
+                  color: ride['status'] == 'Completed'
+                      ? Colors.green.withOpacity(0.15)
+                      : (isUpcoming
+                            ? AppStyles.upcomingBg
+                            : AppStyles.assignedBg),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   ride['status']!,
                   style: TextStyle(
-                    color: isUpcoming
-                        ? AppStyles.upcomingText
-                        : AppStyles.assignedText,
+                    color: ride['status'] == 'Completed'
+                        ? Colors.greenAccent
+                        : (isUpcoming
+                              ? AppStyles.upcomingText
+                              : AppStyles.assignedText),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -382,20 +391,41 @@ class _HomeMainBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
-                    color: (isUpcoming ? Colors.blue : Colors.orange)
-                        .withValues(alpha: 0.1),
+                    color:
+                        (isUpcoming
+                                ? Colors.blue
+                                : (ride['status'] == 'Completed'
+                                      ? Colors.green
+                                      : Colors.orange))
+                            .withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: (isUpcoming ? Colors.blue : Colors.orange)
-                          .withValues(alpha: 0.3),
+                      color:
+                          (isUpcoming
+                                  ? Colors.blue
+                                  : (ride['status'] == 'Completed'
+                                        ? Colors.green
+                                        : Colors.orange))
+                              .withOpacity(0.3),
                     ),
                   ),
                   child: Text(
-                    isUpcoming ? 'Scheduled Ride' : 'Assigned Ride',
+                    isUpcoming
+                        ? 'Scheduled Ride'
+                        : (ride['status'] == 'Completed'
+                              ? 'Past Ride'
+                              : 'Assigned Ride'),
                     style: TextStyle(
-                      color: isUpcoming ? Colors.blue : Colors.orange,
+                      color: isUpcoming
+                          ? Colors.blue
+                          : (ride['status'] == 'Completed'
+                                ? Colors.green
+                                : Colors.orange),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -467,12 +497,23 @@ class _HomeMainBody extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ActiveRideDetailsScreen(),
-                ),
-              ),
+              onPressed: () {
+                if (ride['status'] == 'Completed') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RideCompletionScreen(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ActiveRideDetailsScreen(),
+                    ),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppStyles.primaryButton,
                 foregroundColor: Colors.black,
@@ -526,5 +567,4 @@ class _HomeMainBody extends StatelessWidget {
       child: Icon(icon, color: Colors.white, size: 18),
     );
   }
-
 }
