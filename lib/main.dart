@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'screens/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      'pk_test_51SibBWAYHiAsCNy7QgE5gjQkoIBpUiYTt4M9ScpJAb5LCgjsieiqwWmlxFx94UanaXYnwFGUE0WRsvOJRVdKAhta00UaGP34Hi'; // Replace with a real key
+  await Stripe.instance.applySettings();
   runApp(const MainApp());
 }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'home_screen.dart';
 import '../utils/style_utils.dart';
-
 
 class PaymentMethodScreen extends StatefulWidget {
   const PaymentMethodScreen({super.key});
@@ -12,19 +12,15 @@ class PaymentMethodScreen extends StatefulWidget {
 
 class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _cardNumberController = TextEditingController();
-  final _expiryController = TextEditingController();
-  final _cvvController = TextEditingController();
   final _cardHolderController = TextEditingController();
   final _billingAddressController = TextEditingController();
+  final CardFormEditController _cardEditController = CardFormEditController();
 
   @override
   void dispose() {
-    _cardNumberController.dispose();
-    _expiryController.dispose();
-    _cvvController.dispose();
     _cardHolderController.dispose();
     _billingAddressController.dispose();
+    _cardEditController.dispose();
     super.dispose();
   }
 
@@ -54,10 +50,28 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // Card Preview Mock
-                _buildCardPreview(),
-
-                const SizedBox(height: 40),
+                // Card Details (Stripe)
+                const Text('Card Information', style: AppStyles.labelStyle),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A1A).withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  child: CardFormField(
+                    controller: _cardEditController,
+                    style: CardFormStyle(
+                      textColor: Colors.white,
+                      placeholderColor: Colors.white24,
+                      backgroundColor: Colors.transparent,
+                      cursorColor: AppStyles.metallicYellow,
+                      textErrorColor: Colors.redAccent,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
 
                 // Cardholder Name
                 const Text('Cardholder Name', style: AppStyles.labelStyle),
@@ -72,77 +86,6 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                       color: Colors.white70,
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // Card Number
-                const Text('Card Number', style: AppStyles.labelStyle),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _cardNumberController,
-                  keyboardType: TextInputType.number,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: AppStyles.inputDecoration(
-                    hintText: 'XXXX XXXX XXXX XXXX',
-                    prefixIcon: const Icon(
-                      Icons.credit_card,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Expiry and CVV
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Expiry Date',
-                            style: AppStyles.labelStyle,
-                          ),
-                          const SizedBox(height: 8),
-                          TextFormField(
-                            controller: _expiryController,
-                            keyboardType: TextInputType.datetime,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: AppStyles.inputDecoration(
-                              hintText: 'MM/YY',
-                              prefixIcon: const Icon(
-                                Icons.calendar_today_outlined,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('CVV', style: AppStyles.labelStyle),
-                          const SizedBox(height: 8),
-                          TextFormField(
-                            controller: _cvvController,
-                            keyboardType: TextInputType.number,
-                            obscureText: true,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: AppStyles.inputDecoration(
-                              hintText: '***',
-                              prefixIcon: const Icon(
-                                Icons.lock_outline,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 20),
 
@@ -170,6 +113,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                 GestureDetector(
                   onTap: _saveCard,
                   child: Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
                       gradient: AppStyles.primaryGradient,
@@ -195,104 +139,65 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     );
   }
 
-  Widget _buildCardPreview() {
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E1E1E), Color(0xFF111111)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppStyles.metallicYellow.withOpacity(0.3),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppStyles.metallicYellow.withOpacity(0.1),
-            blurRadius: 15,
-            spreadRadius: 2,
+  void _saveCard() async {
+    if (_formKey.currentState!.validate()) {
+      if (!_cardEditController.details.complete) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please complete your card details.')),
+        );
+        return;
+      }
+
+      try {
+        // Show loading
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(child: CircularProgressIndicator()),
+        );
+
+        // Create PaymentMethod using Stripe
+        final billingDetails = BillingDetails(
+          name: _cardHolderController.text.isNotEmpty ? _cardHolderController.text : null,
+          address: Address(
+            line1: _billingAddressController.text,
+            city: '',
+            country: 'US',
+            line2: '',
+            postalCode: '',
+            state: '',
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Icon(Icons.contactless, color: Colors.white54, size: 30),
-              Image.asset(
-                'assets/images/google_icon.png',
-                width: 30,
-              ), // Placeholder for card type
-            ],
-          ),
-          const Spacer(),
-          const Text(
-            'XXXX XXXX XXXX XXXX',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold,
+        );
+
+        final paymentMethod = await Stripe.instance.createPaymentMethod(
+          params: PaymentMethodParams.card(
+            paymentMethodData: PaymentMethodData(
+              billingDetails: billingDetails,
             ),
           ),
-          const Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'CARD HOLDER',
-                    style: TextStyle(color: Colors.white54, fontSize: 10),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'FULL NAME',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'EXPIRES',
-                    style: TextStyle(color: Colors.white54, fontSize: 10),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'MM/YY',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+        );
 
-  void _saveCard() {
-    if (_formKey.currentState!.validate()) {
-      // Logic for saving card
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Payment Method Saved!')));
+        // Hide loading
+        if (mounted) Navigator.pop(context);
 
-      // Navigate to Home Dashboard
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-        (route) => false,
-      );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+             SnackBar(content: Text('Success! Payment Method ID: ${paymentMethod.id}')),
+          );
+          
+          // Return the payment method to the previous screen or navigate to home
+          Navigator.pop(context, paymentMethod);
+        }
+      } catch (e) {
+        // Hide loading
+        if (mounted) Navigator.pop(context);
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error creating payment method: $e')),
+          );
+        }
+      }
     }
   }
 }

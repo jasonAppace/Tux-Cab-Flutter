@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../utils/style_utils.dart';
 
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'booking_confirmation_screen.dart';
+import 'payment_method_screen.dart';
 
 class PaymentSelectionScreen extends StatefulWidget {
   final double totalAmount;
@@ -135,7 +137,25 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
 
   Widget _buildAddNewCardButton() {
     return TextButton.icon(
-      onPressed: () {},
+      onPressed: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PaymentMethodScreen()),
+        );
+
+        if (result != null && result is PaymentMethod) {
+          final card = result.card;
+          setState(() {
+            _savedCards.add({
+              'type': card.brand ?? 'Card',
+              'number': '**** **** **** ${card.last4 ?? 'XXXX'}',
+              'expiry':
+                  '${card.expMonth}/${card.expYear.toString().substring(2)}',
+            });
+            _selectedCardIndex = _savedCards.length - 1;
+          });
+        }
+      },
       icon: const Icon(Icons.add, color: AppStyles.metallicYellow),
       label: const Text(
         'Add New Card',
@@ -200,7 +220,37 @@ class _PaymentSelectionScreenState extends State<PaymentSelectionScreen> {
 
   Widget _buildPayButton() {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        // Mock Stripe payment processing
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppStyles.cardBg,
+            content: Row(
+              children: [
+                const CircularProgressIndicator(
+                  color: AppStyles.metallicYellow,
+                ),
+                const SizedBox(width: 20),
+                const Text(
+                  'Processing Payment...',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+
+        Navigator.pop(context); // Close dialog
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Payment Successful!')));
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
